@@ -58,7 +58,7 @@ function proxyWritableMethods(dryrun, stats) {
     };
 }
 
-async function migrate({path: dir, projectId, storageBucket, dryrun, app} = {}) {
+async function migrate({path: dir, projectId, storageBucket, databaseURL, dryrun, app} = {}) {
     const stats = {
         scannedFiles: 0,
         executedFiles: 0,
@@ -123,11 +123,16 @@ async function migrate({path: dir, projectId, storageBucket, dryrun, app} = {}) 
         storageBucket = `${projectId}.appspot.com`;
     }
     
+    if (!databaseURL && projectId) {
+        databaseURL = `https://${projectId}.firebaseio.com/`;
+    }
+    
     const providedApp = app;
     if (!app) {
         app = admin.initializeApp({
             projectId,
-            storageBucket
+            storageBucket,
+            databaseURL
         });
     }
 
